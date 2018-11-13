@@ -9,17 +9,19 @@ Uses `gonum` for linear algebra.
 
 ## Example
 
-```go    
+```go
 // Load up a training set
 x, err := mnist.LoadImagesGzipFile("data/train-images-idx3-ubyte.gz")
 if err != nil {
     log.Fatalf("Failed to load images: %s", err)
 }
+
 y, err := mnist.LoadLabelsGzipFile("data/train-labels-idx1-ubyte.gz")
 if err != nil {
     log.Fatalf("Failed to load labels: %s", err)
 }
 
+// Create a simple feed-forward network
 _, cols := x.Dims()
 
 dnn := nn.NewFeedForwardNetwork(
@@ -27,5 +29,6 @@ dnn := nn.NewFeedForwardNetwork(
     nn.NewSoftMaxLayer(),
 )
 
+// Train using stochastic gradient descent.
 sgd.SGD(x, y, nn.L2Loss, dnn, sgd.WithBatchSize(256), sgd.WithEpochs(10))
 ```
