@@ -1,4 +1,4 @@
-package main
+package mnist
 
 import (
 	"log"
@@ -9,7 +9,7 @@ import (
 	"gonum.org/v1/gonum/mat"
 )
 
-func main() {
+func Run() {
 	x, err := mnist.LoadImagesGzipFile("data/train-images-idx3-ubyte.gz")
 	if err != nil {
 		log.Fatalf("Failed to load images: %s", err)
