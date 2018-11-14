@@ -47,4 +47,4 @@ If you have your go bin in your bath, you can now try the examples with
 $ gonn <example name>
 ```
 
-_⚠️ Warning: this code is very much a toy implementation at the moment. You probably shouldn't be trying to use it_
+_⚠️ Warning: this code is very much a toy implementation at the moment. You probably shouldn't be trying to use it_.

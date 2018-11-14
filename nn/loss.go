@@ -26,5 +26,6 @@ func l2(x, y *mat.Dense) float64 {
 			l += math.Pow(d, 2)
 		}
 	}
+
 	return l
 }
