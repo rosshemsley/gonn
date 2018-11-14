@@ -32,3 +32,5 @@ dnn := nn.NewFeedForwardNetwork(
 // Train using stochastic gradient descent.
 sgd.SGD(x, y, nn.L2Loss, dnn, sgd.WithBatchSize(256), sgd.WithEpochs(10))
 ```
+
+_⚠️ Warning: this code is very much a toy implementation at the moment. You probably shouldn't be trying to use it_
