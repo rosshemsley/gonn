@@ -33,4 +33,18 @@ dnn := nn.NewFeedForwardNetwork(
 sgd.SGD(x, y, nn.L2Loss, dnn, sgd.WithBatchSize(256), sgd.WithEpochs(10))
 ```
 
+## Examples
+
+This project uses go modules. If you have go1.11 or above, you can try this out by running
+
+```
+go get github.com/rosshemsley/gonn
+```
+
+If you have your go bin in your bath, you can now try the examples with 
+
+```
+$ gonn <example name>
+```
+
 _⚠️ Warning: this code is very much a toy implementation at the moment. You probably shouldn't be trying to use it_

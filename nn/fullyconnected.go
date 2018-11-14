@@ -75,17 +75,3 @@ func (l *FullyConnectedLayer) Backwards(grad *mat.Dense) *mat.Dense {
 	return result
 	// return nil
 }
-
-## Examples
-
-This project uses go modules. If you have go1.11 or above, you can try this out by running
-
-```
-go get github.com/rosshemsley/gonn
-```
-
-If you have your go bin in your bath, you can now try the examples with 
-
-```
-$ gonn <example name>
-```
