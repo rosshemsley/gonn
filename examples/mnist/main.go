@@ -31,7 +31,7 @@ func Run() {
 	startRate := evaluate(dnn)
 
 	// os.Exit(0)
-	sgd.SGD(x, y, nn.L2Loss, dnn, sgd.WithBatchSize(256), sgd.WithEpochs(5000))
+	sgd.SGD(x, y, nn.L2Loss, dnn, sgd.WithBatchSize(256), sgd.WithEpochs(10000))
 
 	endRate := evaluate(dnn)
 
