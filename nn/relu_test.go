@@ -3,6 +3,7 @@ package nn
 import (
 	"testing"
 
+	"github.com/stretchr/testify/assert"
 	"gonum.org/v1/gonum/mat"
 )
 
@@ -55,5 +56,21 @@ func TestReluBackwards(t *testing.T) {
 	if norm(delta) > 0.001 {
 		t.Errorf("unexpected relu value: %v != %v", r, expected)
 	}
+}
 
+func TestReluNumericGradient(t *testing.T) {
+	x := mat.NewDense(3, 3, []float64{
+		13, 2.01, -1,
+		-3, 410.45, 5.4,
+		30, 40.12, -50,
+	})
+
+	y := mat.NewDense(3, 3, []float64{
+		30, -1.0, 15.3,
+		0.23, 34, 5.4,
+		4, 2.343, -0.3333,
+	})
+
+	err := SimpleGradientTest(NewRelu(), x, y)
+	assert.NoError(t, err)
 }

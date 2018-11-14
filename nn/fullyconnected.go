@@ -13,9 +13,9 @@ type FullyConnectedLayer struct {
 
 func NewFullyConnectedLayer(inputDimension, outputDimension int) *FullyConnectedLayer {
 	return &FullyConnectedLayer{
-		w:          newRandomMatrix(inputDimension, outputDimension),
-		b:          newRandomMatrix(1, outputDimension),
-		activation: NewRelu(outputDimension),
+		w:          NewRandomMatrix(inputDimension, outputDimension),
+		b:          NewRandomMatrix(1, outputDimension),
+		activation: NewRelu(),
 	}
 }
 

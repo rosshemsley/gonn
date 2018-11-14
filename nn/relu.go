@@ -10,7 +10,7 @@ type Relu struct {
 	x *mat.Dense
 }
 
-func NewRelu(size int) *Relu {
+func NewRelu() *Relu {
 	return &Relu{}
 }
 

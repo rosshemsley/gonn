@@ -3,6 +3,7 @@ package nn
 import (
 	"testing"
 
+	"github.com/stretchr/testify/assert"
 	"gonum.org/v1/gonum/mat"
 )
 
@@ -50,13 +51,21 @@ func TestSoftMaxJacobian(t *testing.T) {
 	}
 }
 
-func norm(m *mat.Dense) float64 {
-	sum := 0.0
+func TestSoftmaxNumericGradient(t *testing.T) {
+	x := mat.NewDense(3, 4, []float64{
+		13, 2.01, -1,
+		-3, 410.45, 5.4,
+		30, 40.12, -50,
+		12, 0.3, 1.0,
+	})
 
-	m.Apply(func(_, _ int, v float64) float64 {
-		sum += v * v
-		return v
-	}, m)
+	y := mat.NewDense(3, 4, []float64{
+		30, -1.0, 15.3,
+		0.23, 34, 5.4,
+		4, 2.343, -0.3333,
+		1, 2, 3,
+	})
 
-	return sum
+	err := SimpleGradientTest(NewSoftMaxLayer(), x, y)
+	assert.NoError(t, err)
 }

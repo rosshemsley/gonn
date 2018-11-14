@@ -26,7 +26,7 @@ func TestL2Loss(t *testing.T) {
 		-13.0, 2.0,
 	})
 
-	gradNumeric := NumericGradient(x, f)
+	gradNumeric := NumericGradient(f, x)
 
 	delta := mat.NewDense(2, 3, nil)
 	delta.Sub(gradAnalytic, gradNumeric)

@@ -6,7 +6,7 @@ import (
 	"gonum.org/v1/gonum/mat"
 )
 
-func newRandomMatrix(r, c int) *mat.Dense {
+func NewRandomMatrix(r, c int) *mat.Dense {
 	result := mat.NewDense(r, c, nil)
 
 	for i := 0; i < r; i++ {
