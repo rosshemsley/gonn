@@ -9,12 +9,6 @@ import (
 
 const machineEpsilon = 2.2e-16
 
-// x := mat.NewDense(2, 3, []float64{
-// 	118.0, 14.3,
-// 	0.01, -12.5,
-// 	-13.0, 2.0,
-// })
-
 // SimpleGradientTest connects the given value to the L2 loss, and measure the
 // gradient as computed as the loss against the given test point y.
 func SimpleGradientTest(v Value, x, y *mat.Dense) error {

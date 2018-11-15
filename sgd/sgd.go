@@ -23,11 +23,12 @@ func SGD(x, y *mat.Dense, loss nn.Loss, net nn.Value, settings ...Setting) {
 
 	for epoch := 0; epoch < cfg.numEpochs; epoch++ {
 		xBatch, yBatch, _ := sampleBatch(x, y, cfg.batchSize)
+
 		yHat := net.Forwards(xBatch)
-		l, grad := loss(yHat, yBatch)
+		l, grad := loss(yBatch, yHat)
 		net.Backwards(grad)
 
-		log.Printf("Loss at epoch %d: %f", epoch, l)
+		log.Printf("Loss at step %d: %f", epoch, l)
 	}
 }
 

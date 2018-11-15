@@ -21,21 +21,8 @@ func NewFullyConnectedLayer(inputDimension, outputDimension int) *FullyConnected
 
 func (l *FullyConnectedLayer) Forwards(x *mat.Dense) *mat.Dense {
 	l.x = x
-
-	xRows, _ := x.Dims()
-	_, wCols := l.w.Dims()
-	output := mat.NewDense(xRows, wCols, nil)
-	oRows, oCols := output.Dims()
-	output.Mul(x, l.w)
-
-	// TODO(Ross): surely there's a nicer way to do this.
-	for r := 0; r < oRows; r++ {
-		for c := 0; c < oCols; c++ {
-			output.Set(r, c, output.At(r, c)+l.b.At(0, c))
-		}
-	}
-
-	return l.activation.Forwards(output)
+	a := fullyConnectedForwards(x, l.w, l.b)
+	return l.activation.Forwards(a)
 }
 
 func (l *FullyConnectedLayer) Backwards(grad *mat.Dense) *mat.Dense {
@@ -73,5 +60,41 @@ func (l *FullyConnectedLayer) Backwards(grad *mat.Dense) *mat.Dense {
 	result := mat.NewDense(xRows, xCols, nil)
 	result.Mul(grad, l.w.T())
 	return result
-	// return nil
+}
+
+func fullyConnectedForwards(x, w, b *mat.Dense) *mat.Dense {
+	xRows, _ := x.Dims()
+	_, wCols := w.Dims()
+	output := mat.NewDense(xRows, wCols, nil)
+	oRows, oCols := output.Dims()
+	output.Mul(x, w)
+
+	// TODO(Ross): surely there's a nicer way to do this.
+	for r := 0; r < oRows; r++ {
+		for c := 0; c < oCols; c++ {
+			output.Set(r, c, output.At(r, c)+b.At(0, c))
+		}
+	}
+
+	return output
+}
+
+func fullyConnectedBackwards(grad, x, w, b *mat.Dense) (xGrad, wGrad, bGrad *mat.Dense) {
+	rows, cols := grad.Dims()
+	bGrad = mat.NewDense(1, cols, nil)
+
+	for r := 0; r < rows; r++ {
+		row := mat.NewDense(1, cols, grad.RawRowView(r))
+		bGrad.Add(bGrad, row)
+	}
+
+	wRows, wCols := w.Dims()
+	wGrad = mat.NewDense(wRows, wCols, nil)
+	wGrad.Mul(x.T(), grad)
+
+	xRows, xCols := x.Dims()
+
+	xGrad = mat.NewDense(xRows, xCols, nil)
+	xGrad.Mul(grad, w.T())
+	return
 }
