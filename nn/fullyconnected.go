@@ -27,38 +27,14 @@ func (l *FullyConnectedLayer) Forwards(x *mat.Dense) *mat.Dense {
 
 func (l *FullyConnectedLayer) Backwards(grad *mat.Dense) *mat.Dense {
 	grad = l.activation.Backwards(grad)
+	result, deltaW, deltaB := fullyConnectedBackwards(grad, l.x, l.w, l.b)
 
-	rows, cols := grad.Dims()
-	bGrad := mat.NewDense(1, cols, nil)
+	deltaW.Scale(-LearningRate, deltaW)
+	deltaB.Scale(-LearningRate, deltaB)
 
-	for r := 0; r < rows; r++ {
-		row := mat.NewDense(1, cols, grad.RawRowView(r))
-		bGrad.Add(bGrad, row)
-	}
+	l.w.Add(l.w, deltaW)
+	l.b.Add(l.b, deltaB)
 
-	// Update b with ∇_b(L)
-
-	bGrad.Scale(LearningRate, bGrad)
-	// log.Printf("Update b: %v", bGrad)
-	l.b.Sub(l.b, bGrad)
-
-	// Compute ∇_W(L)
-	// gRows, gCols := grad.Dims()
-	// xRows, xCols := l.x.Dims()
-	wRows, wCols := l.w.Dims()
-	wGrad := mat.NewDense(wRows, wCols, nil)
-	// log.Printf("HERE: ∇: %d, %d  x: %d, %d  w: %d, %d", gRows, gCols, xRows, xCols, wRows, wCols)
-	wGrad.Mul(l.x.T(), grad)
-
-	wGrad.Scale(LearningRate, wGrad)
-	l.w.Sub(l.w, wGrad)
-
-	// Compute ∇_x(L) and return it
-	// gRows, gCols := grad.Dims()
-	xRows, xCols := l.x.Dims()
-	// log.Printf("∇: %d, %d. w: %d, %d x: %d, %d", gRows, gCols, wRows, wCols, xRows, xCols)
-	result := mat.NewDense(xRows, xCols, nil)
-	result.Mul(grad, l.w.T())
 	return result
 }
 
