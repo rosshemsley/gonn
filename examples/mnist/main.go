@@ -22,8 +22,8 @@ func Run() {
 	}
 
 	dnn := nn.NewFeedForwardNetwork(
-		nn.NewFullyConnectedLayer(xCols, 10),
-		// nn.NewFullyConnectedLayer(120, 10),
+		nn.NewFullyConnectedLayer(xCols, 20),
+		nn.NewFullyConnectedLayer(20, 10),
 		nn.NewSoftMaxLayer(),
 	)
 

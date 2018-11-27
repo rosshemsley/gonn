@@ -6,6 +6,25 @@ import (
 	"gonum.org/v1/gonum/mat"
 )
 
+// func TestLossValue(t *testing.T) {
+// 	yHat := mat.NewDense(1, 3, []float64{
+// 		0.5,
+// 		0.3,
+// 		0.2,
+// 	})
+
+// 	y := mat.NewDense(1, 3, []float64{
+// 		1,
+// 		0,
+// 		0,
+// 	})
+
+// 	l, grad := L2Loss(y, yHat)
+// 	log.Printf("loss: %v, grad: %v", l, grad)
+// 	t.Fail()
+
+// }
+
 func TestL2Loss(t *testing.T) {
 	yHat := mat.NewDense(2, 3, []float64{
 		1.0, 3.0,

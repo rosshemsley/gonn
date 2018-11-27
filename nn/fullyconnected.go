@@ -12,11 +12,13 @@ type FullyConnectedLayer struct {
 }
 
 func NewFullyConnectedLayer(inputDimension, outputDimension int) *FullyConnectedLayer {
-	return &FullyConnectedLayer{
+	l := &FullyConnectedLayer{
 		w:          NewRandomMatrix(inputDimension, outputDimension),
 		b:          NewRandomMatrix(1, outputDimension),
 		activation: NewRelu(),
 	}
+
+	return l
 }
 
 func (l *FullyConnectedLayer) Forwards(x *mat.Dense) *mat.Dense {
