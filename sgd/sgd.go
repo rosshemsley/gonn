@@ -35,7 +35,7 @@ func SGD(x, y *mat.Dense, loss nn.Loss, net nn.Value, settings ...Setting) {
 }
 
 func L2Regularize(v nn.Value) {
-	regularizationConstant := 0.01
+	regularizationConstant := 0.001
 	for _, w := range v.Weights() {
 		deltaW := mat.DenseCopyOf(w)
 		deltaW.Scale(float64(-nn.LearningRate*regularizationConstant), deltaW)
