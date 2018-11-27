@@ -2,6 +2,7 @@ package sgd
 
 import (
 	"errors"
+	"fmt"
 	"log"
 	"math/rand"
 
@@ -22,15 +23,17 @@ func SGD(x, y *mat.Dense, loss nn.Loss, net nn.Value, settings ...Setting) {
 	cfg := initConfig(settings...)
 
 	for epoch := 0; epoch < cfg.numEpochs; epoch++ {
-		xBatch, yBatch, _ := sampleBatch(x, y, cfg.batchSize)
+		xBatches, yBatches := createShuffledBatches(x, y, cfg.batchSize)
 
-		yHat := net.Forwards(xBatch)
-		l, grad := loss(yBatch, yHat)
-		L2Regularize(net)
+		for i := range xBatches {
+			xBatch, yBatch := xBatches[i], yBatches[i]
+			yHat := net.Forwards(xBatch)
+			l, grad := loss(yBatch, yHat)
+			L2Regularize(net)
+			net.Backwards(grad)
+			log.Printf("Loss for batch %d/%d, epoch %d/%d: %f", i, len(xBatches), epoch, cfg.numEpochs, l)
+		}
 
-		net.Backwards(grad)
-
-		log.Printf("Loss at step %d: %f", epoch, l)
 	}
 }
 
@@ -53,6 +56,58 @@ func WithEpochs(n int) Setting {
 	return func(c *Config) {
 		c.numEpochs = n
 	}
+}
+
+func createShuffledBatches(x *mat.Dense, y *mat.Dense, batchSize int) ([]*mat.Dense, []*mat.Dense) {
+	xRows, xCols := x.Dims()
+	yRows, yCols := y.Dims()
+	if xRows != yRows {
+		panic(fmt.Sprintf("mismatch in dimensions: %d != %d", xRows, yRows))
+	}
+
+	xs := make([][]float64, xRows)
+	ys := make([][]float64, yRows)
+
+	for i := 0; i < xRows; i++ {
+		xs[i] = x.RawRowView(i)
+		ys[i] = y.RawRowView(i)
+	}
+
+	rand.Shuffle(len(xs), func(i, j int) {
+		xs[i], xs[j] = xs[j], xs[i]
+		ys[i], ys[j] = ys[j], ys[i]
+	})
+
+	xBatches := make([]*mat.Dense, 0)
+	yBatches := make([]*mat.Dense, 0)
+
+	xCurrent := make([]float64, 0)
+	yCurrent := make([]float64, 0)
+	currentCount := 0
+
+	for i := 0; i < xRows; i++ {
+		if currentCount == batchSize || i == xRows-1 {
+			xBatches = append(xBatches, mat.NewDense(currentCount, xCols, xCurrent))
+			yBatches = append(yBatches, mat.NewDense(currentCount, yCols, yCurrent))
+
+			xCurrent = make([]float64, 0)
+			yCurrent = make([]float64, 0)
+			currentCount = 0
+		}
+
+		xCurrent = append(xCurrent, xs[i]...)
+		yCurrent = append(yCurrent, ys[i]...)
+		currentCount++
+	}
+
+	xVals := make([]float64, 0)
+	yVals := make([]float64, 0)
+	for i := range xs {
+		xVals = append(xVals, xs[i]...)
+		yVals = append(yVals, ys[i]...)
+	}
+
+	return xBatches, yBatches
 }
 
 func sampleBatch(X, Y *mat.Dense, n int) (XSample, YSample *mat.Dense, err error) {
