@@ -28,6 +28,8 @@ func SGD(x, y *mat.Dense, loss nn.Loss, net nn.Value, settings ...Setting) {
 	xTrain, yTrain, xVal, yVal := trainValidationSplit(x, y, cfg.validationSetProprtion)
 
 	for epoch := 0; epoch < cfg.numEpochs; epoch++ {
+		net.SetTrainingEnabled(true)
+
 		xBatches, yBatches := createShuffledBatches(xTrain, yTrain, cfg.batchSize)
 
 		for i := range xBatches {
@@ -38,6 +40,7 @@ func SGD(x, y *mat.Dense, loss nn.Loss, net nn.Value, settings ...Setting) {
 			net.Backwards(grad)
 		}
 
+		net.SetTrainingEnabled(false)
 		yValHat := net.Forwards(xVal)
 		j, _ := loss(yVal, yValHat)
 		log.Printf("Validation set loss: %f (epoch %d/%d)", j, epoch+1, cfg.numEpochs)

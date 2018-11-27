@@ -5,22 +5,32 @@ import (
 )
 
 type FullyConnectedLayer struct {
-	w             *mat.Dense
-	b             *mat.Dense
-	x             *mat.Dense
-	activation    Value
+	// UpdateWeights controls whether or not the weights are updated on calling Backwards.
+	// Defaults to true.
 	UpdateWeights bool
+
+	w          *mat.Dense
+	b          *mat.Dense
+	x          *mat.Dense
+	activation Value
+
+	trainingEnabled bool
 }
 
 func NewFullyConnectedLayer(inputDimension, outputDimension int) *FullyConnectedLayer {
 	l := &FullyConnectedLayer{
-		w:             NewRandomMatrix(inputDimension, outputDimension),
-		b:             NewRandomMatrix(1, outputDimension),
-		activation:    NewRelu(),
-		UpdateWeights: true,
+		w:               NewRandomMatrix(inputDimension, outputDimension),
+		b:               NewRandomMatrix(1, outputDimension),
+		activation:      NewRelu(),
+		trainingEnabled: true,
+		UpdateWeights:   true,
 	}
 
 	return l
+}
+
+func (l *FullyConnectedLayer) SetTrainingEnabled(b bool) {
+	l.trainingEnabled = b
 }
 
 func (l *FullyConnectedLayer) Forwards(x *mat.Dense) *mat.Dense {

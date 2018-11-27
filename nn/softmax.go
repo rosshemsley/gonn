@@ -14,6 +14,10 @@ func NewSoftMaxLayer() *SoftMax {
 	return &SoftMax{}
 }
 
+func (l *SoftMax) SetTrainingEnabled(b bool) {
+	// TODO
+}
+
 func (s *SoftMax) Forwards(x *mat.Dense) *mat.Dense {
 	s.sx = softmax(x)
 	return softmax(x)

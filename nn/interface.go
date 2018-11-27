@@ -11,6 +11,9 @@ type Value interface {
 	Forwards(X *mat.Dense) *mat.Dense
 	Backwards(X *mat.Dense) *mat.Dense
 
+	// SetTrainingEnabled tells this node whether not to store gradients and perform dropout.
+	SetTrainingEnabled(bool)
+
 	// Weights returns a slice of all variables that are updated during training.
 	// This makes it possible to implement regularization.
 	Weights() []*mat.Dense

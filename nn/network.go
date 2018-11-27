@@ -15,6 +15,12 @@ func NewFeedForwardNetwork(layers ...Value) *FeedForwardNetwork {
 	}
 }
 
+func (l *FeedForwardNetwork) SetTrainingEnabled(b bool) {
+	for _, layer := range l.layers {
+		layer.SetTrainingEnabled(b)
+	}
+}
+
 // Forwards pushes values through network.
 func (n *FeedForwardNetwork) Forwards(x *mat.Dense) *mat.Dense {
 	var v = x

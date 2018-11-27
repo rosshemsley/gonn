@@ -14,6 +14,10 @@ func NewRelu() *Relu {
 	return &Relu{}
 }
 
+func (l *Relu) SetTrainingEnabled(b bool) {
+	// TODO
+}
+
 func (r *Relu) Forwards(x *mat.Dense) *mat.Dense {
 	r.x = x
 	return relu(x)
