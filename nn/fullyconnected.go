@@ -45,10 +45,9 @@ func (l *FullyConnectedLayer) Backwards(grad *mat.Dense) *mat.Dense {
 }
 
 func (l *FullyConnectedLayer) Weights() []*mat.Dense {
-	return []*mat.Dense{
-		l.w,
-		l.b,
-	}
+	// Note(Ross): this weights slice is used for regularization.
+	// going wisdom is that the bias term doesn't need to be included.
+	return []*mat.Dense{l.w}
 }
 
 func fullyConnectedForwards(x, w, b *mat.Dense) *mat.Dense {
@@ -82,7 +81,6 @@ func fullyConnectedBackwards(grad, x, w, b *mat.Dense) (xGrad, wGrad, bGrad *mat
 	wGrad.Mul(x.T(), grad)
 
 	xRows, xCols := x.Dims()
-
 	xGrad = mat.NewDense(xRows, xCols, nil)
 	xGrad.Mul(grad, w.T())
 	return

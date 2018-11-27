@@ -24,7 +24,6 @@ func (s *SoftMax) Backwards(grad *mat.Dense) *mat.Dense {
 	rows, cols := s.sx.Dims()
 	_, gradCols := grad.Dims()
 
-	// log.Printf("∇_s(L): %v", grad)
 	for r := 0; r < rows; r++ {
 		rowVals := s.sx.RawRowView(r)
 		row := mat.NewDense(1, cols, rowVals)

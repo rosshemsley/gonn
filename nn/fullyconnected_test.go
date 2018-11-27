@@ -113,6 +113,10 @@ type ValueStub struct {
 	ForwardsImpl, BackwardsImpl func(X *mat.Dense) *mat.Dense
 }
 
+func (*ValueStub) Weights() []*mat.Dense {
+	return make([]*mat.Dense, 0)
+}
+
 func (v *ValueStub) Forwards(x *mat.Dense) *mat.Dense {
 	return v.ForwardsImpl(x)
 }

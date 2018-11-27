@@ -25,6 +25,9 @@ func (noopValue) Forwards(x *mat.Dense) *mat.Dense {
 func (noopValue) Backwards(y *mat.Dense) *mat.Dense {
 	return y
 }
+func (noopValue) Weights() []*mat.Dense {
+	return make([]*mat.Dense, 0)
+}
 
 func TestSimpleGradientTest(t *testing.T) {
 	x := mat.NewDense(3, 3, []float64{
