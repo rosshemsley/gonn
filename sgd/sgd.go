@@ -22,18 +22,22 @@ type LossFunction func(X, Y *mat.Dense) *mat.Dense
 func SGD(x, y *mat.Dense, loss nn.Loss, net nn.Value, settings ...Setting) {
 	cfg := initConfig(settings...)
 
+	xTrain, yTrain, xVal, yVal := trainValidationSplit(x, y, 0.1)
+
 	for epoch := 0; epoch < cfg.numEpochs; epoch++ {
-		xBatches, yBatches := createShuffledBatches(x, y, cfg.batchSize)
+		xBatches, yBatches := createShuffledBatches(xTrain, yTrain, cfg.batchSize)
 
 		for i := range xBatches {
 			xBatch, yBatch := xBatches[i], yBatches[i]
 			yHat := net.Forwards(xBatch)
-			l, grad := loss(yBatch, yHat)
+			_, grad := loss(yBatch, yHat)
 			L2Regularize(net)
 			net.Backwards(grad)
-			log.Printf("Loss for batch %d/%d, epoch %d/%d: %f", i, len(xBatches), epoch, cfg.numEpochs, l)
 		}
 
+		yValHat := net.Forwards(xVal)
+		j, _ := loss(yVal, yValHat)
+		log.Printf("Validation set loss: %f (epoch %d/%d)", j, epoch+1, cfg.numEpochs)
 	}
 }
 
@@ -58,7 +62,26 @@ func WithEpochs(n int) Setting {
 	}
 }
 
-func createShuffledBatches(x *mat.Dense, y *mat.Dense, batchSize int) ([]*mat.Dense, []*mat.Dense) {
+func trainValidationSplit(x, y *mat.Dense, proportionInValidation float64) (xTrain, yTrain, xVal, yVal *mat.Dense) {
+	xRows, xCols := x.Dims()
+	yRows, yCols := y.Dims()
+	if xRows != yRows {
+		panic(fmt.Sprintf("mismatch in dimensions: %d != %d", xRows, yRows))
+	}
+
+	nRowsValidation := int(proportionInValidation * float64(xRows))
+	nRowsTrain := xRows - nRowsValidation
+
+	xTrain = mat.NewDense(nRowsTrain, xCols, x.RawMatrix().Data[0:nRowsTrain*xCols])
+	yTrain = mat.NewDense(nRowsTrain, yCols, y.RawMatrix().Data[0:nRowsTrain*yCols])
+
+	xVal = mat.NewDense(nRowsValidation, xCols, x.RawMatrix().Data[0:nRowsValidation*xCols])
+	yVal = mat.NewDense(nRowsValidation, yCols, y.RawMatrix().Data[0:nRowsValidation*yCols])
+
+	return
+}
+
+func createShuffledBatches(x, y *mat.Dense, batchSize int) ([]*mat.Dense, []*mat.Dense) {
 	xRows, xCols := x.Dims()
 	yRows, yCols := y.Dims()
 	if xRows != yRows {
