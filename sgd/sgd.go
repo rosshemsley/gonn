@@ -13,16 +13,19 @@ import (
 type Setting func(*Config)
 
 type Config struct {
-	numEpochs int
-	batchSize int
+	numEpochs              int
+	batchSize              int
+	validationSetProprtion float64
+	regularizationConstant float64
 }
 
 type LossFunction func(X, Y *mat.Dense) *mat.Dense
 
+// SGD runs stochastic gradient descent on the given net.
 func SGD(x, y *mat.Dense, loss nn.Loss, net nn.Value, settings ...Setting) {
 	cfg := initConfig(settings...)
 
-	xTrain, yTrain, xVal, yVal := trainValidationSplit(x, y, 0.1)
+	xTrain, yTrain, xVal, yVal := trainValidationSplit(x, y, cfg.validationSetProprtion)
 
 	for epoch := 0; epoch < cfg.numEpochs; epoch++ {
 		xBatches, yBatches := createShuffledBatches(xTrain, yTrain, cfg.batchSize)
@@ -31,7 +34,7 @@ func SGD(x, y *mat.Dense, loss nn.Loss, net nn.Value, settings ...Setting) {
 			xBatch, yBatch := xBatches[i], yBatches[i]
 			yHat := net.Forwards(xBatch)
 			_, grad := loss(yBatch, yHat)
-			L2Regularize(net)
+			l2Regularize(net, cfg.regularizationConstant)
 			net.Backwards(grad)
 		}
 
@@ -41,24 +44,35 @@ func SGD(x, y *mat.Dense, loss nn.Loss, net nn.Value, settings ...Setting) {
 	}
 }
 
-func L2Regularize(v nn.Value) {
-	regularizationConstant := 0.001
-	for _, w := range v.Weights() {
-		deltaW := mat.DenseCopyOf(w)
-		deltaW.Scale(float64(-nn.LearningRate*regularizationConstant), deltaW)
-		w.Add(w, deltaW)
-	}
-}
-
 func WithBatchSize(n int) Setting {
 	return func(c *Config) {
 		c.batchSize = n
 	}
 }
 
+func WithValidationSetSize(percent int) Setting {
+	return func(c *Config) {
+		c.validationSetProprtion = float64(percent) / 100
+	}
+}
+
+func WithRegularizationConstant(v float64) Setting {
+	return func(c *Config) {
+		c.regularizationConstant = v
+	}
+}
+
 func WithEpochs(n int) Setting {
 	return func(c *Config) {
 		c.numEpochs = n
+	}
+}
+
+func l2Regularize(v nn.Value, regularizationConstant float64) {
+	for _, w := range v.Weights() {
+		deltaW := mat.DenseCopyOf(w)
+		deltaW.Scale(float64(-nn.LearningRate*regularizationConstant), deltaW)
+		w.Add(w, deltaW)
 	}
 }
 
@@ -159,8 +173,10 @@ func sampleBatch(X, Y *mat.Dense, n int) (XSample, YSample *mat.Dense, err error
 
 func initConfig(settings ...Setting) Config {
 	cfg := Config{
-		numEpochs: 1,
-		batchSize: 1,
+		numEpochs:              1,
+		batchSize:              1,
+		validationSetProprtion: 0.1,
+		regularizationConstant: 0.001,
 	}
 	for _, s := range settings {
 		s(&cfg)
