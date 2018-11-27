@@ -179,7 +179,7 @@ func initConfig(settings ...Setting) Config {
 		numEpochs:              1,
 		batchSize:              1,
 		validationSetProprtion: 0.1,
-		regularizationConstant: 0.001,
+		regularizationConstant: 0.0005,
 	}
 	for _, s := range settings {
 		s(&cfg)
