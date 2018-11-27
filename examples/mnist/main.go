@@ -23,16 +23,16 @@ func Run() {
 
 	dnn := nn.NewFeedForwardNetwork(
 		nn.NewFullyConnectedLayer(xCols, 30),
-		nn.NewFullyConnectedLayer(30, 30),
-		nn.NewDropoutLayer(0.1),
-		nn.NewFullyConnectedLayer(30, 10),
+		nn.NewFullyConnectedLayer(30, 20),
+		nn.NewDropoutLayer(0.15),
+		nn.NewFullyConnectedLayer(20, 10),
 		nn.NewSoftMaxLayer(),
 	)
 
 	log.Printf("Classification rate: %.2f%%", evaluate(dnn))
 	startRate := evaluate(dnn)
 
-	sgd.SGD(x, y, nn.L2Loss, dnn, sgd.WithBatchSize(128), sgd.WithEpochs(80))
+	sgd.SGD(x, y, nn.L2Loss, dnn, sgd.WithBatchSize(128), sgd.WithEpochs(100))
 
 	endRate := evaluate(dnn)
 	log.Printf("Classification rate on test set: from %.2f%% to %.2f%%", startRate, endRate)
