@@ -5,17 +5,19 @@ import (
 )
 
 type FullyConnectedLayer struct {
-	w          *mat.Dense
-	b          *mat.Dense
-	x          *mat.Dense
-	activation Value
+	w             *mat.Dense
+	b             *mat.Dense
+	x             *mat.Dense
+	activation    Value
+	UpdateWeights bool
 }
 
 func NewFullyConnectedLayer(inputDimension, outputDimension int) *FullyConnectedLayer {
 	l := &FullyConnectedLayer{
-		w:          NewRandomMatrix(inputDimension, outputDimension),
-		b:          NewRandomMatrix(1, outputDimension),
-		activation: NewRelu(),
+		w:             NewRandomMatrix(inputDimension, outputDimension),
+		b:             NewRandomMatrix(1, outputDimension),
+		activation:    NewRelu(),
+		UpdateWeights: true,
 	}
 
 	return l
@@ -31,11 +33,13 @@ func (l *FullyConnectedLayer) Backwards(grad *mat.Dense) *mat.Dense {
 	grad = l.activation.Backwards(grad)
 	result, deltaW, deltaB := fullyConnectedBackwards(grad, l.x, l.w, l.b)
 
-	deltaW.Scale(-LearningRate, deltaW)
-	deltaB.Scale(-LearningRate, deltaB)
+	if l.UpdateWeights {
+		deltaW.Scale(-LearningRate, deltaW)
+		deltaB.Scale(-LearningRate, deltaB)
 
-	l.w.Add(l.w, deltaW)
-	l.b.Add(l.b, deltaB)
+		l.w.Add(l.w, deltaW)
+		l.b.Add(l.b, deltaB)
+	}
 
 	return result
 }

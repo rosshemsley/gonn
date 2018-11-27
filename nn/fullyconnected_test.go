@@ -7,8 +7,27 @@ import (
 	"gonum.org/v1/gonum/mat"
 )
 
-func TestFullyConnectedXGrad(t *testing.T) {
+func TestFullyConnected(t *testing.T) {
+	x := mat.NewDense(3, 4, []float64{
+		13, 2.01, -1, 3.0,
+		-3, 12.45, 5.4, 9.1,
+		30, 40.12, -50, 4.5,
+	})
 
+	y := mat.NewDense(3, 3, []float64{
+		30, -1.0, 15.3,
+		0.23, 34, 5.4,
+		4, 2.343, -0.3333,
+	})
+
+	l := NewFullyConnectedLayer(4, 3)
+	l.UpdateWeights = false
+
+	err := SimpleGradientTest(l, x, y)
+	assert.NoError(t, err)
+}
+
+func TestFullyConnectedXGrad(t *testing.T) {
 	x := mat.NewDense(3, 4, []float64{
 		13, 2.01, -1, 3.0,
 		-3, 12.45, 5.4, 9.1,
