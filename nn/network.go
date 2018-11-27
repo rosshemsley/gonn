@@ -26,6 +26,17 @@ func (n *FeedForwardNetwork) Forwards(x *mat.Dense) *mat.Dense {
 	return v
 }
 
+// Weights returns all learnable weights from the network (omits the bias terms).
+func (n *FeedForwardNetwork) Weights() []*mat.Dense {
+	weights := make([]*mat.Dense, 0)
+
+	for _, layer := range n.layers {
+		weights = append(weights, layer.Weights()...)
+	}
+
+	return weights
+}
+
 // Backwards flows the gradient back through the network.
 func (n *FeedForwardNetwork) Backwards(x *mat.Dense) *mat.Dense {
 	v := x

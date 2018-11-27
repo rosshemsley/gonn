@@ -44,6 +44,13 @@ func (l *FullyConnectedLayer) Backwards(grad *mat.Dense) *mat.Dense {
 	return result
 }
 
+func (l *FullyConnectedLayer) Weights() []*mat.Dense {
+	return []*mat.Dense{
+		l.w,
+		l.b,
+	}
+}
+
 func fullyConnectedForwards(x, w, b *mat.Dense) *mat.Dense {
 	xRows, _ := x.Dims()
 	_, wCols := w.Dims()

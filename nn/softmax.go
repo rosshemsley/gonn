@@ -38,6 +38,10 @@ func (s *SoftMax) Backwards(grad *mat.Dense) *mat.Dense {
 	return mat.NewDense(rows, cols, result)
 }
 
+func (s *SoftMax) Weights() []*mat.Dense {
+	return make([]*mat.Dense, 0)
+}
+
 func softmaxLayerGradient(grad, x *mat.Dense) *mat.Dense {
 	return nil
 }

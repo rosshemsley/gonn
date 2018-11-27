@@ -23,6 +23,10 @@ func (r *Relu) Backwards(grad *mat.Dense) *mat.Dense {
 	return reluBackwards(grad, r.x)
 }
 
+func (r *Relu) Weights() []*mat.Dense {
+	return make([]*mat.Dense, 0)
+}
+
 func relu(x *mat.Dense) *mat.Dense {
 	rows, cols := x.Dims()
 
