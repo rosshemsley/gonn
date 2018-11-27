@@ -26,7 +26,7 @@ import (
 // }
 
 func TestL2Loss(t *testing.T) {
-	yHat := mat.NewDense(2, 3, []float64{
+	y := mat.NewDense(2, 3, []float64{
 		1.0, 3.0,
 		5.0, 7.0,
 		11.0, 13.0,
@@ -35,7 +35,7 @@ func TestL2Loss(t *testing.T) {
 	var gradAnalytic *mat.Dense
 
 	f := func(x *mat.Dense) (l float64) {
-		l, gradAnalytic = L2Loss(x, yHat)
+		l, gradAnalytic = L2Loss(y, x)
 		return l
 	}
 

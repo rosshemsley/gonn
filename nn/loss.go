@@ -11,7 +11,7 @@ func L2Loss(y *mat.Dense, yHat *mat.Dense) (float64, *mat.Dense) {
 	l := l2(y, yHat)
 
 	grad := mat.NewDense(rows, cols, nil)
-	grad.Sub(y, yHat)
+	grad.Sub(yHat, y)
 	grad.Scale(1/float64(rows), grad)
 	return l / float64(rows), grad
 }

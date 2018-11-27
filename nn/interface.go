@@ -4,8 +4,7 @@ import (
 	"gonum.org/v1/gonum/mat"
 )
 
-// TODO(Ross): Why negative?
-const LearningRate = -1
+const LearningRate = 1
 
 // Value represents any node in an NN computation graph.
 type Value interface {

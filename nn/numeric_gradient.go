@@ -14,11 +14,11 @@ const machineEpsilon = 2.2e-16
 func SimpleGradientTest(v Value, x, y *mat.Dense) error {
 	var gradLoss *mat.Dense
 
-	_, gradLoss = L2Loss(v.Forwards(x), y)
+	_, gradLoss = L2Loss(y, v.Forwards(x))
 	gradAnalytic := v.Backwards(gradLoss)
 
 	f := func(x *mat.Dense) float64 {
-		l, _ := L2Loss(v.Forwards(x), y)
+		l, _ := L2Loss(y, v.Forwards(x))
 		return l
 	}
 
