@@ -29,7 +29,7 @@ func Run() {
 	log.Printf("Classification rate: %.2f%%", evaluate(dnn))
 	startRate := evaluate(dnn)
 
-	sgd.SGD(x, y, nn.L2Loss, dnn, sgd.WithBatchSize(128), sgd.WithEpochs(20))
+	sgd.SGD(x, y, nn.L2Loss, dnn, sgd.WithBatchSize(128), sgd.WithEpochs(40))
 
 	endRate := evaluate(dnn)
 
@@ -56,8 +56,6 @@ func evaluate(dnn nn.Value) float64 {
 
 		classified := mnist.LabelValue(yHat.RawRowView(0))
 		expected := mnist.LabelValue(extract(i, y).RawRowView(0))
-		// log.Printf("predicted: %d, actual: %d", classified, expected)
-
 		if classified == expected {
 			correct++
 		}
