@@ -33,7 +33,7 @@ func Run() {
 	log.Printf("Classification rate: %.2f%%", evaluate(dnn))
 	startRate := evaluate(dnn)
 
-	sgd.SGD(x, y, nn.L2Loss, dnn, sgd.WithBatchSize(128), sgd.WithEpochs(100))
+	sgd.SGD(x, y, nn.L2Loss, dnn, sgd.WithBatchSize(64), sgd.WithEpochs(100))
 
 	endRate := evaluate(dnn)
 	log.Printf("Classification rate on test set: from %.2f%% to %.2f%%", startRate, endRate)
