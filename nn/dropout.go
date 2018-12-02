@@ -22,7 +22,9 @@ func (l *DropoutLayer) SetTrainingEnabled(b bool) {
 
 func (l *DropoutLayer) Forwards(x *mat.Dense) *mat.Dense {
 	if !l.trainingMode {
-		return x
+		result := mat.DenseCopyOf(x)
+		result.Scale(1-l.p, x)
+		return result
 	}
 
 	rows, cols := x.Dims()
