@@ -30,15 +30,17 @@ func LoadImagesGzipFile(path string) (*mat.Dense, error) {
 }
 
 func LoadLabelsGzipFile(path string) (*mat.Dense, error) {
-	r, err := os.Open(path)
+	f, err := os.Open(path)
 	if err != nil {
 		return nil, err
 	}
+	defer f.Close()
 
-	rgz, err := gzip.NewReader(r)
+	rgz, err := gzip.NewReader(f)
 	if err != nil {
 		return nil, err
 	}
+	defer rgz.Close()
 
 	return LoadLabels(rgz)
 }
